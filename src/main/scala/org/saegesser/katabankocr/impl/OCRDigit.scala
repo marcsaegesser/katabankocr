@@ -2,7 +2,7 @@ package org.saegesser.katabankocr.impl
 
 case class OCRDigit(inputData: String) {
   def value = OCRDigit.parse(inputData)
-  def isInvalid = !value.isEmpty
+  def isInvalid = value.isEmpty
   def char = value getOrElse ('?')
 }
 

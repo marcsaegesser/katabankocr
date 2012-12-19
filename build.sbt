@@ -81,7 +81,8 @@ libraryDependencies ++= Seq (
   // "org.scalacheck" %% "scalacheck" % "1.10.0" % "test",
   // "org.specs2" %% "specs2" % "1.12.2" % "test",
   "com.github.scopt" %% "scopt" % "2.1.0",
-  "org.scalatest" %% "scalatest" % "2.0.M4" % "test"
+  "org.scalatest" %% "scalatest" % "2.0.M4" % "test",
+  "junit" % "junit" % "4.10"
 )
 
 /* you may need these repos */
