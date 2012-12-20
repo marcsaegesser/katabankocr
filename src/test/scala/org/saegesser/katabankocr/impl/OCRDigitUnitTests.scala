@@ -64,5 +64,28 @@ class OCRDigitUnitTests extends WordSpec with ShouldMatchers {
       d.value should equal(None)
       d.isInvalid should be (true)
     }
+    "find valid mutations of normal digits" in {
+      OCRDigit0.validMutations should equal (Set(OCRDigit8))
+      OCRDigit1.validMutations should equal (Set(OCRDigit7))
+      OCRDigit2.validMutations should equal (Set())
+      OCRDigit3.validMutations should equal (Set(OCRDigit9))
+      OCRDigit4.validMutations should equal (Set())
+      OCRDigit5.validMutations should equal (Set(OCRDigit6, OCRDigit9))
+      OCRDigit7.validMutations should equal (Set(OCRDigit1))
+      OCRDigit8.validMutations should equal (Set(OCRDigit0, OCRDigit6, OCRDigit9))
+      OCRDigit9.validMutations should equal (Set(OCRDigit3, OCRDigit5, OCRDigit8))
+    }
+    "find valid mutations of invalid digits" in {
+      val segs2 =
+        " _ " +
+        "|_|" +
+        "  |"
+      OCRDigit(segs2).validMutations should equal(Set(OCRDigit4, OCRDigit9))
+      val segs3 =
+        " _ " +
+        "|  " +
+        "  |"
+      OCRDigit(segs3).validMutations should equal(Set())
+    }
   }
 }

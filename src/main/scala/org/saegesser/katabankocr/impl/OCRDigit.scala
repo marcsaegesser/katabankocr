@@ -1,28 +1,123 @@
 package org.saegesser.katabankocr.impl
 
-case class OCRDigit(inputData: String) {
-  def value = OCRDigit.parse(inputData)
-  def isInvalid = value.isEmpty
-  def char = value getOrElse ('?')
+trait OCRDigit {
+  def data: IndexedSeq[Char]
+  def value: Option[Int]
+  def isInvalid: Boolean
+  def char: Char
+  def validMutations = OCRDigit.mutations(data)
+  override def toString = "" + char
+}
+
+case object OCRDigit0 extends OCRDigit {
+  def data = OCRDigit.zero.toIndexedSeq
+  def value = Some(0)
+  def isInvalid = false
+  def char = '0'
+}
+
+case object OCRDigit1 extends OCRDigit {
+  def data = OCRDigit.one.toIndexedSeq
+  def value = Some(1)
+  def isInvalid = false
+  def char = '1'
+}
+
+case object OCRDigit2 extends OCRDigit {
+  def data = OCRDigit.two.toIndexedSeq
+  def value = Some(2)
+  def isInvalid = false
+  def char = '2'
+}
+
+case object OCRDigit3 extends OCRDigit {
+  def data = OCRDigit.three.toIndexedSeq
+  def value = Some(3)
+  def isInvalid = false
+  def char = '3'
+}
+
+case object OCRDigit4 extends OCRDigit {
+  def data = OCRDigit.four.toIndexedSeq
+  def value = Some(4)
+  def isInvalid = false
+  def char = '4'
+}
+
+case object OCRDigit5 extends OCRDigit {
+  def data = OCRDigit.five.toIndexedSeq
+  def value = Some(5)
+  def isInvalid = false
+  def char = '5'
+}
+
+case object OCRDigit6 extends OCRDigit {
+  def data = OCRDigit.six.toIndexedSeq
+  def value = Some(6)
+  def isInvalid = false
+  def char = '6'
+}
+
+case object OCRDigit7 extends OCRDigit {
+  def data = OCRDigit.seven.toIndexedSeq
+  def value = Some(7)
+  def isInvalid = false
+  def char = '7'
+}
+
+case object OCRDigit8 extends OCRDigit {
+  def data = OCRDigit.eight.toIndexedSeq
+  def value = Some(8)
+  def isInvalid = false
+  def char = '8'
+}
+
+case object OCRDigit9 extends OCRDigit {
+  def data = OCRDigit.nine.toIndexedSeq
+  def value = Some(9)
+  def isInvalid = false
+  def char = '9'
+}
+
+case class OCRDigitBad(inputData: String) extends OCRDigit {
+  def data = inputData.toIndexedSeq
+  def value = None
+  def isInvalid = true
+  def char = '?'
 }
 
 object OCRDigit {
-  def parse(in: String): Option[Int] = {
+  def apply(inputData: String) = parse(inputData)
+  
+  def parse(in: String): OCRDigit = {
     in match {
-      case OCRDigit.zero => Some(0)
-      case OCRDigit.one => Some(1)
-      case OCRDigit.two => Some(2)
-      case OCRDigit.three => Some(3)
-      case OCRDigit.four => Some(4)
-      case OCRDigit.five => Some(5)
-      case OCRDigit.six => Some(6)
-      case OCRDigit.seven => Some(7)
-      case OCRDigit.eight => Some(8)
-      case OCRDigit.nine => Some(9)
-      case _ => None 
+      case OCRDigit.zero  => OCRDigit0
+      case OCRDigit.one   => OCRDigit1
+      case OCRDigit.two   => OCRDigit2
+      case OCRDigit.three => OCRDigit3
+      case OCRDigit.four  => OCRDigit4
+      case OCRDigit.five  => OCRDigit5
+      case OCRDigit.six   => OCRDigit6
+      case OCRDigit.seven => OCRDigit7
+      case OCRDigit.eight => OCRDigit8
+      case OCRDigit.nine  => OCRDigit9
+      case _              => OCRDigitBad(in)
     }
   }
-  
+
+  def mutations(segments: IndexedSeq[Char]): Set[OCRDigit] = {
+    def helper(index: Int, accum: Set[OCRDigit]): Set[OCRDigit] =
+      if(index == segments.length) accum
+      else
+        helper(index+1,
+          segments(index) match {
+            case ' ' => accum + OCRDigit(segments.updated(index, '|') mkString) + OCRDigit(segments.updated(index, '_') mkString)
+            case _   => accum + OCRDigit(segments.updated(index, ' ') mkString)
+          })
+    
+      helper(0, Set()) filter {!_.isInvalid}
+  }                                         //> mutations: (segments: IndexedSeq[Char])List[IndexedSeq[Char]]
+
   val zero = " _ " +
              "| |" +
              "|_|"
