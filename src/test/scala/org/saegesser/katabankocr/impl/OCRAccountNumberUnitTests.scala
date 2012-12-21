@@ -61,8 +61,7 @@ class OCRAccountNumberUnitTests extends WordSpec with ShouldMatchers {
         "|_||_||_||_||_||_||_||_||_|"
 
       val acctnum = new OCRAccountNumber(data)
-      import OCRAccountNumber._
-      val expectedAmbiguous = Set(string2Digits("888886888"), string2Digits("888888880"), string2Digits("888888988"))
+        val expectedAmbiguous = Set(string2Digits("888886888"), string2Digits("888888880"), string2Digits("888888988"))
       acctnum.digits should equal (string2Digits("888888888"))
       acctnum.ambiguities.toSet should equal (expectedAmbiguous)
     }
@@ -73,10 +72,27 @@ class OCRAccountNumberUnitTests extends WordSpec with ShouldMatchers {
         "  | _||_||_||_|  |  |  | _|"
 
       val acctnum = new OCRAccountNumber(data)
-      import OCRAccountNumber._
       val expectedAmbiguous = Set(string2Digits("490067115"), string2Digits("490067719"), string2Digits("490867715"))
       acctnum.digits should equal (string2Digits("490067715"))
       acctnum.ambiguities.toSet should equal (expectedAmbiguous)
+    }
+  }
+
+  def string2Digits(s: String): List[OCRDigit] = {
+    s.toList map {
+      _ match {
+        case '0' => OCRDigit0
+        case '1' => OCRDigit1
+        case '2' => OCRDigit2
+        case '3' => OCRDigit3
+        case '4' => OCRDigit4
+        case '5' => OCRDigit5
+        case '6' => OCRDigit6
+        case '7' => OCRDigit7
+        case '8' => OCRDigit8
+        case '9' => OCRDigit9
+        case _   => throw new Error("Invalid digit value")
+      }
     }
   }
 }

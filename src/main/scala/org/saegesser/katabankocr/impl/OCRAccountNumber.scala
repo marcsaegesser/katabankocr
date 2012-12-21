@@ -3,9 +3,10 @@ package org.saegesser.katabankocr.impl
 import scala.collection._
 
 class OCRAccountNumber (input: String) {
-  val (digits, ambiguities) = OCRAccountNumber.parse(input)
+  import OCRAccountNumber._
+  val (digits, ambiguities) = parse(input)
   lazy val isInvalid = OCRAccountNumber.isInvalid(digits)
-  lazy val isError = if (!isInvalid) OCRAccountNumber.checksum(digits) != 0 else true
+  lazy val isError = if (!isInvalid) checksum(digits) != 0 else true
   override def toString =  {
     def errorMessage = 
       if(!ambiguities.isEmpty) " AMB [ " + (ambiguities map {_ mkString} mkString ", ") + " ]"
@@ -55,23 +56,5 @@ object OCRAccountNumber {
       }
     
     helper(0, List())
-  }
-
-  def string2Digits(s: String): List[OCRDigit] = {
-    s.toList map {
-      _ match {
-        case '0' => OCRDigit0
-        case '1' => OCRDigit1
-        case '2' => OCRDigit2
-        case '3' => OCRDigit3
-        case '4' => OCRDigit4
-        case '5' => OCRDigit5
-        case '6' => OCRDigit6
-        case '7' => OCRDigit7
-        case '8' => OCRDigit8
-        case '9' => OCRDigit9
-        case _   => throw new Error("Invalid digit value")
-      }
-    }
   }
 }
