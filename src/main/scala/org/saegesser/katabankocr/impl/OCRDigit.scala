@@ -88,7 +88,7 @@ case class OCRDigitBad(inputData: String) extends OCRDigit {
 
 object OCRDigit {
   def apply(inputData: String) = parse(inputData)
-  
+
   def parse(in: String): OCRDigit = {
     in match {
       case OCRDigit.zero  => OCRDigit0
@@ -105,6 +105,10 @@ object OCRDigit {
     }
   }
 
+  /** Returns a set OCRDigits that can be generated from the input digit
+    * by one of two modifications 1) a space where there should be a
+    * segment or 2) a segment (of either type) that should be a space.
+    */
   def mutations(segments: IndexedSeq[Char]): Set[OCRDigit] = {
     def helper(index: Int, accum: Set[OCRDigit]): Set[OCRDigit] =
       if(index == segments.length) accum
@@ -114,7 +118,7 @@ object OCRDigit {
             case ' ' => accum + OCRDigit(segments.updated(index, '|') mkString) + OCRDigit(segments.updated(index, '_') mkString)
             case _   => accum + OCRDigit(segments.updated(index, ' ') mkString)
           })
-    
+
       helper(0, Set()) filter {!_.isInvalid}
   }                                         //> mutations: (segments: IndexedSeq[Char])List[IndexedSeq[Char]]
 
@@ -122,8 +126,8 @@ object OCRDigit {
              "| |" +
              "|_|"
   val one = "   " +
-  		    "  |" +
-  		    "  |"
+            "  |" +
+            "  |"
   val two = " _ " +
             " _|" +
             "|_ "
