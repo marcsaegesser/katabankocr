@@ -26,7 +26,8 @@ scmInfo := Some(
 // organizationName := "My Company"
 
 /* scala versions and options */
-scalaVersion := "2.9.2"
+//scalaVersion := "2.9.2"
+scalaVersion := "2.10.0"
 
 // crossScalaVersions := Seq("2.9.1")
 
@@ -81,7 +82,7 @@ libraryDependencies ++= Seq (
   // "org.scalacheck" %% "scalacheck" % "1.10.0" % "test",
   // "org.specs2" %% "specs2" % "1.12.2" % "test",
   "com.github.scopt" %% "scopt" % "2.1.0",
-  "org.scalatest" %% "scalatest" % "2.0.M4" % "test",
+  "org.scalatest" % "scalatest_2.10.0" % "2.0.M5" % "test",
   "junit" % "junit" % "4.10"
 )
 
