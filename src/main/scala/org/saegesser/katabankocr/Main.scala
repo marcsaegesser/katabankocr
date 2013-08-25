@@ -7,10 +7,9 @@ object Main {
   def main(args: Array[String]) = {
     val s = Source.fromFile(args(0))
     val accountNumbers = s.getLines.grouped(4)
-      .map { _.mkString.substring(0, 81) }
-      .filter { _.length == 81 }
+      .map { _.take(3).toList }
       .map { new OCRAccountNumber(_) }
-    accountNumbers.foreach (println(_))
+    accountNumbers.foreach(println(_))
   }
 }
 

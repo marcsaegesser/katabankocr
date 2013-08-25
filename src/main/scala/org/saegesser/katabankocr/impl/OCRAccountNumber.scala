@@ -11,7 +11,9 @@ import scala.language.postfixOps
  * ODR derived account numbers to contain ambiguities or unrecoverable
  * errors
  */
-class OCRAccountNumber(input: String) {
+class OCRAccountNumber(input: List[String]) {
+  def this(input: String) = this(input.grouped(27).toList)
+
   import OCRAccountNumber._
   // Parse input into list of digits and potentially a list of ambiguous results
   val (digits, ambiguities) = parse(input)
@@ -29,23 +31,27 @@ class OCRAccountNumber(input: String) {
 }
 
 object OCRAccountNumber {
-  def parse(input: String): (List[OCRDigit], List[List[OCRDigit]]) = {
-    val digits = for {
-      i <- 0 until 9
-      digitOffsetRow0 = i * 3
-      digitOffsetRow1 = digitOffsetRow0 + 27
-      digitOffsetRow2 = digitOffsetRow1 + 27
-      s = input.substring(digitOffsetRow0, digitOffsetRow0 + 3) + input.substring(digitOffsetRow1, digitOffsetRow1 + 3) + input.substring(digitOffsetRow2, digitOffsetRow2 + 3)
-    } yield OCRDigit(s)
+  def parse(input: List[String]): (List[OCRDigit], List[List[OCRDigit]]) = {
+    try {
+      val digits =
+        input.map { _.grouped(3).toList } // Group digit segments together
+          .transpose // Collect the three lines of each digit into a single list
+          .map { l => OCRDigit(l.mkString) } // Create a digit from the segments
 
-    if (!isInvalid(digits) && checksum(digits) == 0) (digits.toList, List())
-    else
-      fixSingleSegmentErrors(digits) match {
-        case h :: Nil => (h, List())
-        case h :: t => (digits.toList, h :: t)
-        case Nil => (digits.toList, List())
-      }
+      if (!isInvalid(digits) && checksum(digits) == 0) (digits.toList, List())
+      else
+        fixSingleSegmentErrors(digits) match {
+          case h :: Nil => (h, List())
+          case h :: t => (digits.toList, h :: t)
+          case Nil => (digits.toList, List())
+        }
+    } catch {
+      case t: Throwable => (List.fill(7)(OCRDigitBad("")), List())
+    }
+
   }
+
+  def parse(input: String): (List[OCRDigit], List[List[OCRDigit]]) = parse(input.grouped(27).toList)
 
   def isInvalid(digits: Seq[OCRDigit]): Boolean = digits exists { _.isInvalid }
 
@@ -57,7 +63,7 @@ object OCRAccountNumber {
     helper(digits.toList, 9, 0) % 11
   }
 
-  def fixSingleSegmentErrors(digits: IndexedSeq[OCRDigit]): List[List[OCRDigit]] = {
+  def fixSingleSegmentErrors(digits: List[OCRDigit]): List[List[OCRDigit]] = {
     def helper(index: Int, accum: List[List[OCRDigit]]): List[List[OCRDigit]] =
       if (index == digits.length) accum
       else {

@@ -76,6 +76,15 @@ class OCRAccountNumberUnitTests extends WordSpec with ShouldMatchers {
       acctnum.digits should equal (string2Digits("490067715"))
       acctnum.ambiguities.toSet should equal (expectedAmbiguous)
     }
+    "fail to parse data in invalid format" in {
+      val data =
+        "    _  _  _  _  _  _      " +
+        "|_||_|| || ||_   |  |  || " +
+        "  | _||_||_||_|  |  |  | |"
+
+      val acctnum = new OCRAccountNumber(data)
+      acctnum.isError should be (true)
+    }
   }
 
   def string2Digits(s: String): List[OCRDigit] = {
