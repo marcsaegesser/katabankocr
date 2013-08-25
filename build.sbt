@@ -33,7 +33,7 @@ scalaVersion := "2.10.0"
 
 offline := false
 
-scalacOptions ++= Seq("-deprecation", "-unchecked")
+scalacOptions ++= Seq("-deprecation", "-unchecked", "-feature")
 
 // scalacOptions ++= Seq("-Ydependent-method-types") // if using shapeless
 

@@ -1,6 +1,8 @@
 package org.saegesser.katabankocr.impl
 
-trait OCRDigit {
+import scala.language.postfixOps
+
+sealed trait OCRDigit {
   def data: IndexedSeq[Char]
   def value: Option[Int]
   def isInvalid: Boolean
